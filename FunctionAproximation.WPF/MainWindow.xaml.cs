@@ -2,6 +2,7 @@
 using OxyPlot;
 using OxyPlot.Series;
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using FilePath = System.IO.Path;
@@ -100,6 +101,7 @@ public partial class MainWindow : Window
     private void FindAproximation()
     {
         UpdateCombobox();
+        Results.Clear();
         try
         {
             _resultDisplayer = MpfBuilder.MultipleFunctionAproximation(FirstXUpDown.Value!.Value,
@@ -124,6 +126,7 @@ public partial class MainWindow : Window
             Results.Text += "\n\nAMatrix\n\n" + aMatrix;
             Results.Text += "\n\nCMatrix\n\n" + cMatrix;
             Results.Text += "\n\nAproximation\n\n" + aproximationText;
+            File.WriteAllText(TargetFilePath!, Results.Text);
 
         }
         catch (Exception ex)

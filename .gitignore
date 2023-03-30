@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/FunctionAproximation.WinForms/FunctionAproximation.WinForms.csproj
+/FunctionAproximation.WinForms/Program.cs
+/FunctionAproximation.WinForms/Form1.resx
+/FunctionAproximation.WinForms/Form1.Designer.cs
+/FunctionAproximation.WinForms/Form1.cs
