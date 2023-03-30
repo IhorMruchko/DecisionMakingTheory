@@ -1,0 +1,239 @@
+﻿<Window x:Class="FunctionAproximation.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:local="clr-namespace:FunctionAproximation.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="800"
+        MinWidth="750"
+        MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Cascadia code"
+        FontSize="14">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Inputs">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="8*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Header="Data settings"
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  Style="{StaticResource GroupBoxStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Size"
+                                       Grid.Row="0"
+                                       Grid.Column="0"
+                                       Style="{StaticResource LabelStyle}"/>
+                                <Label Content="Source file"
+                                       Grid.Row="1"
+                                       Grid.Column="0"
+                                       Style="{StaticResource LabelStyle}"/>
+                                <Label Content="Target file"
+                                       Grid.Row="2"
+                                       Grid.Column="0"
+                                       Style="{StaticResource LabelStyle}"/>
+                                <xctk:IntegerUpDown x:Name="DataSizeUpDown"
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Value="45"
+                                                    DefaultValue="45"
+                                                    Minimum="10"
+                                                    Style="{StaticResource IntegerUpDownStyle}"/>
+                                <DockPanel FlowDirection="RightToLeft"
+                                           Grid.Row="1"
+                                           Grid.Column="2">
+                                    <Button Content="."
+                                            Width="19"
+                                            HorizontalContentAlignment="Center"
+                                            Click="SourceButton_Click"/>
+                                    <TextBox x:Name="SourceFileTextBox"
+                                             Style="{StaticResource TextBoxStyle}"/>
+                                </DockPanel>
+
+                                <DockPanel FlowDirection="RightToLeft"
+                                           Grid.Row="2"
+                                           Grid.Column="1">
+                                    <Button Content="."
+                                            Width="19"
+                                            HorizontalContentAlignment="Center"
+                                            Click="TargetButton_Click"/>
+                                    <TextBox x:Name="TargetFileTextBox"
+                                             Style="{StaticResource TextBoxStyle}"/>
+                                </DockPanel>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Vector settings"
+                                  Grid.Row="0"
+                                  Grid.Column="1"
+                                  Style="{StaticResource GroupBoxStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0"
+                                           Grid.Column="0">
+                                    <Label Content="X1 size"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Width="70"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="FirstXUpDown"
+                                                        Value="2"
+                                                        DefaultValue="2"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="0"
+                                           Grid.Column="1">
+                                    <Label Content="X2 size"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Width="70"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="SecondXUpDown"
+                                                        Value="2"
+                                                        DefaultValue="2"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1"
+                                           Grid.Column="0">
+                                    <Label Content="X3 size"
+                                           Width="70"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="ThirdXUpDown"
+                                                        Value="3"
+                                                        DefaultValue="3"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1"
+                                           Grid.Column="1">
+                                    <Label Content="Y size"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Width="70"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="YUpDown"
+                                                        Value="4"
+                                                        DefaultValue="4"
+                                                        Minimum="3"/>
+                                </DockPanel>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Polynomial settings"
+                                  Grid.Row="0"
+                                  Grid.Column="2"
+                                  Style="{StaticResource GroupBoxStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0"
+                                           Grid.Column="0">
+                                    <Label Content="X1 power"
+                                           Width="190"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="FirstXPoweUpDown"
+                                                        Value="2"
+                                                        DefaultValue="2"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1"
+                                           Grid.Column="0">
+                                    <Label Content="X2 power"
+                                           Width="190"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="SecondXPoweUpDown"
+                                                        Value="2"
+                                                        DefaultValue="2"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="2"
+                                           Grid.Column="0">
+                                    <Label Content="X3 power"
+                                           Width="190"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="ThirdXPoweUpDown"
+                                                        Value="2"
+                                                        DefaultValue="2"
+                                                        Minimum="1"/>
+                                </DockPanel>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                    <GroupBox Header="Results"
+                              Grid.Row="1"
+                              Grid.Column="0"
+                              Style="{StaticResource GroupBoxStyle}">
+                        <TextBox x:Name="Results"
+                                 Style="{StaticResource TextBoxStyle}">
+                        </TextBox>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Charts">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="10*"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Grid.Row="0"
+                              Grid.Column="0"
+                              Header="Plot settings"
+                              Style="{StaticResource GroupBoxStyle}">
+                        <DockPanel>
+                            <Label Content="Y dimension"
+                                   Style="{StaticResource LabelStyle}"/>
+                            
+                            <ComboBox Name="YDimensionCombobox"
+                                      Width="500"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      SelectionChanged="YDimensionCombobox_SelectionChanged"/>
+                            
+                            <Label Content="Mismatch"
+                                   Style="{StaticResource LabelStyle}"/>
+                            
+                            <TextBox Name="MismatchTextBox"
+                                     Style="{StaticResource TextBoxStyle}"/>
+                        </DockPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1"
+                              Grid.Column="1"
+                              Header="Plot"
+                              Style="{StaticResource GroupBoxStyle}">
+                        <oxy:PlotView x:Name="PlotSource"/>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
