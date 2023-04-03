@@ -16,8 +16,8 @@ public class MultipleParameterFunction : IParameterReader,
                                          IAproximationFinder,
                                          IResultDisplayer
 {
-    private int _dataSize;
-    private int _totalLineSize;
+    private readonly int _dataSize;
+    private readonly int _totalLineSize;
     private double[,] _x1Values;
     private double[,] _x2Values;
     private double[,] _x3Values;
@@ -58,7 +58,7 @@ public class MultipleParameterFunction : IParameterReader,
         if (lines.Length < _dataSize)
             throw new ArgumentOutOfRangeException(nameof(lines.Length), "Length of the data in the file is less than expected value.");
 
-        for (var i = 0; i < lines.Length; ++i)
+        for (var i = 0; i < _dataSize; ++i)
         {
             var line = lines[i].Split(";", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
@@ -149,7 +149,9 @@ public class MultipleParameterFunction : IParameterReader,
 
     public IResultDisplayer DisplayLambdas(out string lambdas)
     {
-        lambdas = string.Join("\t\t", _lambda!);
+        lambdas = _lambda1!.ToMatrix().ToMatrixString() + "\n"
+            + _lambda2!.ToMatrix().ToMatrixString() + "\n"
+            + _lambda3!.ToMatrix().ToMatrixString() + "\n";
         return this;
     }
 
