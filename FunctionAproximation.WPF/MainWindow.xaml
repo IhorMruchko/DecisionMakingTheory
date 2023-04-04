@@ -13,6 +13,11 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="Cascadia code"
         FontSize="14">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:IndexToBooleanConverter x:Key="FromIndexToBool"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <TabControl>
             <TabItem Header="Inputs">
@@ -23,6 +28,7 @@
                     </Grid.RowDefinitions>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -158,7 +164,7 @@
                                 <DockPanel Grid.Row="0"
                                            Grid.Column="0">
                                     <Label Content="X1 power"
-                                           Width="190"
+                                           Width="140"
                                            Style="{StaticResource LabelStyle}"/>
                                     <xctk:IntegerUpDown x:Name="FirstXPoweUpDown"
                                                         Value="2"
@@ -168,7 +174,7 @@
                                 <DockPanel Grid.Row="1"
                                            Grid.Column="0">
                                     <Label Content="X2 power"
-                                           Width="190"
+                                           Width="140"
                                            Style="{StaticResource LabelStyle}"/>
                                     <xctk:IntegerUpDown x:Name="SecondXPoweUpDown"
                                                         Value="2"
@@ -178,12 +184,43 @@
                                 <DockPanel Grid.Row="2"
                                            Grid.Column="0">
                                     <Label Content="X3 power"
-                                           Width="190"
+                                           Width="140"
                                            Style="{StaticResource LabelStyle}"/>
                                     <xctk:IntegerUpDown x:Name="ThirdXPoweUpDown"
                                                         Value="2"
                                                         DefaultValue="2"
                                                         Minimum="1"/>
+                                </DockPanel>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Recreation settings"
+                                  Grid.Column="3"
+                                  Style="{StaticResource GroupBoxStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <ComboBox Name="RecreationFunctionCombobox"
+                                          VerticalContentAlignment="Center"
+                                          HorizontalContentAlignment="Center"
+                                          Margin="4 0 4 0">
+                                    <ComboBoxItem Content="Default" 
+                                                  IsSelected="True"/>
+                                    <ComboBoxItem Content="Connected"/>
+                                </ComboBox>
+                                <DockPanel Grid.Row="2"
+                                           Grid.Column="0"
+                                           Margin="3 0 3 0"
+                                           IsEnabled="{Binding ElementName=RecreationFunctionCombobox, Path=SelectedIndex, Converter={StaticResource FromIndexToBool}, ConverterParameter=1}">
+                                    <Label Content="Precision"
+                                           Width="130"
+                                           Style="{StaticResource LabelStyle}"/>
+                                    <xctk:IntegerUpDown x:Name="PercisionValueUpDown"
+                                                        Value="9"
+                                                        DefaultValue="9"
+                                                        Minimum="2"
+                                                        Maximum="20"/>
                                 </DockPanel>
                             </Grid>
                         </GroupBox>
@@ -195,6 +232,7 @@
                         <TextBox x:Name="Results"
                                  Style="{StaticResource TextBoxStyle}">
                         </TextBox>
+
                     </GroupBox>
                 </Grid>
             </TabItem>
