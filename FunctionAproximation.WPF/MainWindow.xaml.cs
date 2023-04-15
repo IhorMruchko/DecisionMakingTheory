@@ -14,7 +14,20 @@ public partial class MainWindow : Window
     private string? _sourceFilePath;
     private string? _targetFilePath;
     private IResultDisplayer? _resultDisplayer;
-    
+
+    private IParametterSetter Recover
+        => RecreationFunctionCombobox.SelectedIndex == 0
+        ? MpfBuilder.MultipleFunctionAproximation(FirstXUpDown.Value!.Value,
+                                                  SecondXUpDown.Value!.Value,
+                                                  ThirdXUpDown.Value!.Value,
+                                                  YUpDown.Value!.Value,
+                                                  DataSizeUpDown.Value!.Value)
+        : MpfBuilder.MultipleConnectedFunctionAproximation(FirstXUpDown.Value!.Value,
+                                                           SecondXUpDown.Value!.Value,
+                                                           ThirdXUpDown.Value!.Value,
+                                                           YUpDown.Value!.Value,
+                                                           DataSizeUpDown.Value!.Value);
+
     public string? SourceFilePath
     {
         get => _sourceFilePath;
@@ -86,6 +99,7 @@ public partial class MainWindow : Window
             StrokeThickness = 2,
             Color = OxyColors.Red
         };
+
         foreach(var (data, aproximation) in dataPoints.Zip(aproximationPoints))
         {
             dataPlot.Points.Add(new DataPoint(data.Item1, data.Item2));
@@ -104,11 +118,8 @@ public partial class MainWindow : Window
         Results.Clear();
         try
         {
-            _resultDisplayer = MpfBuilder.MultipleFunctionAproximation(FirstXUpDown.Value!.Value,
-                                                                       SecondXUpDown.Value!.Value,
-                                                                       ThirdXUpDown.Value!.Value,
-                                                                       YUpDown.Value!.Value,
-                                                                       DataSizeUpDown.Value!.Value)
+            _resultDisplayer = Recover
+                .SetParameters(PercisionValueUpDown.Value!.Value)
                 .Read(SourceFilePath!)
                 .Normalize()
                 .EvaluateLambda(FirstXPoweUpDown.Value!.Value,
@@ -117,8 +128,8 @@ public partial class MainWindow : Window
                 .EvaluateAMatrix()
                 .EvaluateCMatrix()
                 .Aproximate()
-                .DisplayLambdas(out var lambdas)
-                .DisplayAMatrix(out var aMatrix)
+                .GetLambdasString(out var lambdas)
+                .GetAMatrixesString(out var aMatrix)
                 .DisplayCMatrix(out var cMatrix)
                 .DisplayAproximation(out var aproximationText);
 

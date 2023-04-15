@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 using DMT.Tools;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -33,6 +34,21 @@ public static class MatrixExtension
         }
         return matrix;
     }
+
+    public static double[,] NormalizeConnection(this double[,] values, double precision)
+    {
+        var result = new double[values.GetLength(0), values.GetLength(1)];
+        
+        for (var i = 0; i < values.GetLength(0); ++i)
+        {
+            for (var j = 0; j < values.GetLength(1); ++j)
+            {
+                result[i, j] = Math.Log(1 + precision + values[i, j]);
+            }
+        }
+
+        return result;
+    }
     
     public static double[] GetB(this double[,] source) 
         => source.ToMatrix().GetB();
@@ -61,12 +77,31 @@ public static class MatrixExtension
         return psiValues;
     }
 
+    public static double[,] GetPsi(this double[,] lambda, double[,] xValues, int size, double precision)
+    {
+        return lambda.ToMatrix().GetPsiConnected(xValues.ToMatrix(), size, precision);
+    }
+
+    public static double[,] GetPsiConnected(this Matrix<double> lambda, Matrix<double> xValues, int size, double precision)
+    {
+        var psiValues = new double[size, xValues.ColumnCount];
+
+        for (var i = 0; i < size; ++i)
+            for (var j = 0; j < xValues.ColumnCount; ++j)
+                psiValues[i, j] = Math.Exp(lambda.Row(j).Select((value, p) => value * Math.Log(1 + precision + FunctionApproximation.EvaluatePolinomOffset(xValues[i, j], p))).Sum()) - 1;
+
+        return psiValues;
+    }
+
     public static double[,] GetA(this double[,] psiValues, double[,] yValues) 
         => psiValues.ToMatrix().GetA(yValues.ToMatrix());
 
     public static double[,] GetA(this Matrix<double> psiValues, Matrix<double> yValues) 
         => psiValues.LeastSquare(yValues).Rotate();
 
+    public static double[,] GetA(this double[,] psiValues, double[,] yValues, double precision)
+        => psiValues.NormalizeConnection(precision).ToMatrix().GetA(yValues.NormalizeConnection(precision).ToMatrix());
+    
     public static double[] GetFi(this double[,] aValues, double[,] psiValues, int index, int size) 
     {
         var result = new double[size];
@@ -78,6 +113,17 @@ public static class MatrixExtension
         return result;
     }
 
+    public static double[] GetFiConnected(this double[,] aValues, double[,] psiValues, int index, int size)
+    {
+        var result = new double[size];
+
+        for (var i = 0; i < size; ++i)
+            for (var j = 0; j < aValues.GetLength(1); ++j)
+                result[i] += aValues[index, j] * Math.Log(psiValues[i, j] + 1);
+
+        return result.Select(value => Math.Exp(value) - 1).ToArray();
+    }
+
     public static double[] GetC(this double[,] yValues, double[,] A1, double[,] A2, double[,] A3,
             double[,] Psi1, double[,] Psi2, double[,] Psi3, int size, int index)
     {
@@ -87,6 +133,19 @@ public static class MatrixExtension
            A1.GetFi(Psi1, index, size),
            A2.GetFi(Psi2, index, size),
            A3.GetFi(Psi3, index, size),
+        });
+
+        return matrix.LeastSquare(y).Column(0).ToArray();
+    } 
+    public static double[] GetC(this double[,] yValues, double[,] A1, double[,] A2, double[,] A3,
+            double[,] Psi1, double[,] Psi2, double[,] Psi3, int size, int index, double precision)
+    {
+        var y = yValues.ToMatrix().Column(index).Select(value => Math.Log(value + 1)).ToArray().ToColumnMatrix();
+        var matrix = Matrix<double>.Build.DenseOfColumnArrays(new double[][]
+        {
+           A1.GetFiConnected(Psi1, index, size).Select(value => Math.Log(1 + precision + value)).ToArray(),
+           A2.GetFiConnected(Psi2, index, size).Select(value => Math.Log(1 + precision + value)).ToArray(),
+           A3.GetFiConnected(Psi3, index, size).Select(value => Math.Log(1 + precision + value)).ToArray(),
         });
 
         return matrix.LeastSquare(y).Column(0).ToArray();
@@ -118,6 +177,19 @@ public static class MatrixExtension
         return dataSource.GetLength(1) * power;
     }
 
+    public static int InsertValues(this Matrix<double> source, double[,] dataSource, int index, int power, int offset, double percision)
+    {
+        for (var i = 0; i < dataSource.GetLength(1); ++i)
+        {
+            for (var p = 1; p < power + 1; ++p)
+            {
+                source[index, offset + i * power + p] = Math.Log(1 + percision + FunctionApproximation.EvaluatePolinomOffset(dataSource[index, i], p));
+            }
+        }
+        return dataSource.GetLength(1) * power;
+    }
+
+
     public static double[,] GetSubMatrix(this double[] source, int rows, int columns, int offset)
     {
         var result = new double[rows, columns];
@@ -131,4 +203,5 @@ public static class MatrixExtension
         }
         return result;
     }
+
 }

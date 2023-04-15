@@ -1,6 +1,6 @@
 ﻿namespace DMT.Tools.MultipleParameterFunctionBuilder;
 
-public interface IParameterReader
+public interface IFileReader
 {
     INormalizer Read(string filePath);
 }
